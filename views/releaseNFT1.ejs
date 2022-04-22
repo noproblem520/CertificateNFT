@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+
+    <script src="/javascripts/blockchain.js"></script>
+    <title>Document</title>
+    
+</head>
+<body>
+    <h1>mintAndTransferNFT</h1>
+    <hr>
+    <br>
+    <div>
+        
+        <label for="baseURI">baseURI for token：</label>
+        <input id="baseURI" type="text" placeholder="Please enter the baseURI.">
+        <button onclick="deploySmartContract($('#baseURI').val())" class="">Deploy</button>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div>
+        <label for="toAddr">toAddress：</label>
+        <input id="toAddr" type="text">
+        <button onclick="mintAndTransfer($('#toAddr').val())" class="">Transfer</button>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div>
+        <div style="float:left">TotalSupply=</div>
+        <div id="totalSupply" style="float:left"></div>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div>
+        <div>
+            <label for="OwnerOfTokenID">Please enter tokenID to search who owns it:</label>
+            <input id="OwnerOfTokenID" type="text">
+            <button onclick="getOwnerOf($('#OwnerOfTokenID').val())" class="">search</button>
+        </div>
+        
+        <div id="OwnerOf"></div>
+        <div style="float:left"></div>
+        <div id="TokenURILabel" style="float:left"></div>
+        <div style="float:left">
+            <a id="tokenURI" href="" target="_blank" style="float:left"></a>
+        </div>
+        
+    </div>
+    <br>
+    <hr>
+</body>
+
+</html>

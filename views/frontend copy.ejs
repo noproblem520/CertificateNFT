@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    <!-- <script src="/javascripts/blockchain.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <title>Frontend Management</title>
+  </head>
+  <body>
+    <div id="app" class="container-fluid">
+      <table style="width: 100%">
+        <tr>
+          <td style="width: 33%"></td>
+          <td style="width: 33%; text-align: center">
+            <span
+              style="
+                font-family: Microsoft JhengHei;
+                font-size: 40px;
+                font-weight: bold;
+              "
+              >frontend</span
+            >
+          </td>
+          <td>
+            <button class="enableEthereumButton">Enable Ethereum</button>
+            <h2>
+              Account: <span class="showAccount">{{ accounts }}</span>
+            </h2>
+          </td>
+        </tr>
+      </table>
+
+      <br /><br />
+
+      <!-- tab標籤 -->
+      <ul id="myTab" class="nav nav-tabs">
+        <li class="active">
+          <a href="#first" data-toggle="tab"> 查詢學習時數及擁有之證書 </a>
+        </li>
+
+        <li class="">
+          <a href="#second" data-toggle="tab"> 課程種類 </a>
+        </li>
+        <li class="" @click="getAddrInfo()">
+          <a href="#third" data-toggle="tab"> 個人檔案 </a>
+        </li>
+      </ul>
+      <!-- 每個tab頁對應的內容 -->
+      <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade in active" id="first">
+          <br />
+          <p style="font-size: 24px">Search</p>
+
+          <br />
+
+          <div>
+            <label for="search_Addr">Addr</label>
+            <input
+              id="search_Addr"
+              v-model="search_Addr"
+              type="text"
+              placeholder="Address"
+            />
+            <button @click="getAddrInfo2(search_Addr,'3','2')">search</button>
+          </div>
+          <br />
+          <p style="font-size: 24px">學習時數</p>
+          <table class="table" style="width: 100%">
+            <th>address</th>
+            <th>tokenID</th>
+            <th>title</th>
+            <th>hours</th>
+            <tr v-for="erc1155 in erc1155Arr">
+              <td style="width: 20%">erc1155.address</td>
+              <td style="width: 20%">erc1155tokenID</td>
+              <td style="width: 20%">erc1155.title</td>
+              <td style="width: 20%">
+                <p id="hoursxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"></p>
+              </td>
+            </tr>
+          </table>
+          <br />
+
+          <p style="font-size: 24px">已取得之證書</p>
+          <div class="nftdiv" v-for="token in tokenJsonAry">
+            <div class="img-block" style="height: 55%">
+              <img
+                style="
+                  padding: 15px;
+                  width: 100%;
+                  height: 100%;
+                  object-fit: contain;
+                "
+                class="fit-picture"
+                :src="token.properties.image.URL"
+              />
+            </div>
+            <div style="margin-top: 20px">
+              <div>title : {{ token.title }}</div>
+              <div>owner : {{ token.owner }}</div>
+              <a :href="token.link" target="_blank">{{ token.link }}</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="second">
+          <br />
+          <p style="font-size: 24px">資料庫erc721</p>
+          <table class="table" style="width: 100%">
+            <th>address</th>
+            <th>certificate name</th>
+            <th>level</th>
+            <th>authority</th>
+            <th>fileName</th>
+            <th>ERC11155 Address</th>
+            <th>ERC1155 TokenID</th>
+
+            <% for(var i=0; i < result721.length; i++) { %>
+            <tr>
+              <td style="width: 20%">
+                <p id="erc721Addr_<%= i %>"><%= result721[i].address %></p>
+              </td>
+              <td><%= result721[i].title %></td>
+              <td><%= result721[i].level %></td>
+              <td><%= result721[i].authority %></td>
+              <td>
+                <p id="erc721fileName_<%= i %>"><%= result721[i].fileName %></p>
+              </td>
+              <td><%= result721[i].ERC1155Addr %></td>
+              <td><%= result721[i].ERC1155TokenID %></td>
+
+              <!-- <td>
+                          <button type="submit" onclick="deleteRow(<%=result[i].id %>)" id=<%=result[i].id %> name=button<%=result[i].id
+                              %>>delete</button>
+                        </td> -->
+            </tr>
+            <% } %>
+          </table>
+        </div>
+
+        <div id="third" class="tab-pane fade">
+          <br />
+          <p style="font-size: 24px">Search</p>
+
+          <p style="font-size: 24px">//TODO 有時間做秀出NFT圖片</p>
+
+          <br />
+
+          <br />
+          <p style="font-size: 24px">學習時數</p>
+          <table class="table" style="width: 100%">
+            <th>address</th>
+            <th>tokenID</th>
+            <th>title</th>
+            <th>hours</th>
+            <th>award certificate</th>
+            <% for(var i=0; i < result.length; i++) { %>
+            <tr>
+              <td style="width: 20%"><%= result[i].address %></td>
+              <td style="width: 20%"><%= result[i].tokenID %></td>
+              <td style="width: 20%"><%= result[i].title %></td>
+              <td style="width: 20%">
+                <p id="self_hours<%=i%>"></p>
+              </td>
+              <td style="width: 20%">
+                <button onclick="mintNFT(<%=i%>)">award certificate</button>
+              </td>
+            </tr>
+            <% } %>
+          </table>
+          <br />
+
+          <p style="font-size: 24px">已取得之證書</p>
+
+          <div class="nftdiv" v-for="token in tokenJsonAry">
+            <div class="img-block" style="height: 55%">
+              <img
+                style="
+                  padding: 15px;
+                  width: 100%;
+                  height: 100%;
+                  object-fit: contain;
+                "
+                class="fit-picture"
+                :src="token.properties.image.URL"
+              />
+            </div>
+            <div style="margin-top: 20px">
+              <div>title : {{ token.title }}</div>
+              <div>owner : {{ token.owner }}</div>
+              <a :href="token.link" target="_blank">{{ token.link }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      type="text/javascript"
+      src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"
+    ></script>
+    <script>
+      //   const ethereumButton = document.querySelector(".enableEthereumButton");
+      //   const showAccount = document.querySelector(".showAccount");
+
+      //   ethereumButton.addEventListener("click", () => {
+      //     getAccount();
+      //   });
+
+      //   async function getAccount() {
+      //     const accounts = await ethereum.request({
+      //       method: "eth_requestAccounts",
+      //     });
+      //     const account = accounts;
+      //     showAccount.innerHTML = account;
+      //   }
+    </script>
+    <script>
+      Vue.createApp({
+        data() {
+          return {
+            search_Addr: "",
+            tokenJsonAry: [],
+            accounts: null,
+            compile_code: null,
+            w3: null,
+          };
+        },
+        methods: {
+          getBalanceOfEach721: async function (address, length, _self) {
+            console.log("getBalanceOfEach721");
+            this.tokenJsonAry = [];
+            for (let i = 0; i < length; i++) {
+              let fileName = $("#erc721fileName_" + i).text();
+              let contractAddress = $("#erc721Addr_" + i).text();
+
+              await this.changeContractABI(fileName);
+              let contract = this.NFT1_smartContract(contractAddress);
+
+              let amount = await contract.methods
+                .balanceOf(address)
+                .call({ from: this.accounts });
+
+              if (amount > 0) {
+                let tokenID = -1;
+
+                tokenID = await contract.methods
+                  .tokenOfOwnerByIndex(address, 0)
+                  .call({ from: this.accounts });
+
+                let link = "";
+
+                link =
+                  "http://localhost:3000/" +
+                  (await contract.methods
+                    .tokenURI(tokenID)
+                    .call({ from: this.accounts }));
+
+                let tokenJson = await this.getNFT(link);
+                tokenJson.link = link;
+
+                this.tokenJsonAry.push(tokenJson);
+              }
+            }
+          },
+          getAddrInfo2: function (address, erc1155length, erc721length) {
+            this.getBalanceOfBatch(address, erc1155length, false);
+            this.getBalanceOfEach721(address, erc721length, false);
+          },
+          getAddrInfo: function (erc1155length, erc721length) {
+            this.getBalanceOfBatch(this.accounts, erc1155length, true);
+            this.getBalanceOfEach721(this.accounts, erc721length, true);
+          },
+          getBalanceOfBatch: async function (address, length, _self) {
+            let fileName = "credit_hours";
+            let contractAddress = "0xa6AC7C69163935A6DEBd909b8c8376f18cEa79Ba";
+
+            await this.changeContractABI(fileName);
+
+            let contract = this.NFT1_smartContract(contractAddress);
+            let arrAddr = [];
+            let arrTokenID = [];
+            for (let i = 0; i < length; i++) {
+              arrAddr.push(address);
+              arrTokenID.push(i);
+            }
+
+            contract.methods
+              .balanceOfBatch(arrAddr, arrTokenID)
+              .call({ from: this.accounts }, function (err, result) {
+                for (let i = 0; i < length; i++) {
+                  if (_self) {
+                    $("#self_hours" + i).text(result[i]);
+                  } else {
+                    $("#hours" + i).text(result[i]);
+                  }
+                }
+              });
+          },
+
+          changeContractABI: function (contractName) {
+            return new Promise((resolve, reject) => {
+              $.get("/build/" + contractName + ".json").then((result) => {
+                // return new w3.eth.Contract(result["abi"], contractAddress);
+                this.compile_code = result;
+                resolve(result);
+              });
+            });
+          },
+
+          NFT1_smartContract: function (contractAddress) {
+            return new w3.eth.Contract(compile_code["abi"], contractAddress);
+          },
+
+          changeContractABI: function (contractName) {
+            return new Promise((resolve, reject) => {
+              $.get("/build/" + contractName + ".json").then((result) => {
+                // return new w3.eth.Contract(result["abi"], contractAddress);
+                compile_code = result;
+                resolve(result);
+              });
+            });
+          },
+          makefile: function (baseURI, tokenID, to, type) {
+            $.ajax({
+              method: "POST",
+              url: "/nfts/makefile",
+              data: { baseURI, tokenID, to, type },
+            });
+          },
+          makefolder: function (baseURI) {
+            $.ajax({
+              method: "POST",
+              url: "/nfts/makefolder",
+              data: { baseURI },
+            });
+          },
+          getNFT: async function (link) {
+            // return new Promise((resolve, reject)=>{
+            let result = null;
+            await $.get(link).then((res) => {
+              result = res;
+            });
+            // })
+            return result;
+          },
+          mintNFT: async function (tokenID) {
+            await changeContractABI("credit_hours");
+            let contract = NFT1_smartContract(
+              "0xa6AC7C69163935A6DEBd909b8c8376f18cEa79Ba"
+            );
+            let baseURI = "";
+            let NFTTokenID = 0;
+            await contract.methods
+              .creditsToNFT(tokenID)
+              .send({ from: this.accounts });
+
+            let fileName = $("#erc721fileName_" + tokenID).text();
+            let contractAddress = $("#erc721Addr_" + tokenID).text();
+
+            await changeContractABI(fileName);
+
+            contract = NFT1_smartContract(contractAddress);
+
+            await contract.methods
+              .baseURI()
+              .call({ from: this.accounts }, (err, result) => {
+                baseURI = result;
+              });
+            await contract.methods
+              .totalSupply()
+              .call({ from: this.accounts }, (err, result) => {
+                NFTTokenID = parseInt(result) - 1;
+              });
+
+            this.makefile(baseURI, NFTTokenID, this.accounts, fileName);
+
+            window.location.reload();
+          },
+
+          init: async function () {
+            this.compile_code = $.get("/build/credit_hours.json");
+            const accounts = await ethereum.request({
+              method: "eth_requestAccounts",
+            });
+            this.accounts = accounts[0];
+
+            if (typeof web3 !== "undefined") {
+              w3 = new Web3(web3.currentProvider);
+            } else {
+              w3 = new Web3(
+                new Web3.providers.HttpProvider("http://127.0.0.1:7545")
+              );
+            }
+
+            axios
+              .get("/nfts/test")
+              .then((res) => {
+                console.table(res.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          },
+        },
+        mounted() {
+          this.init();
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>

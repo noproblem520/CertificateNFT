@@ -1,0 +1,9 @@
+.nftdiv {
+  margin-left: 10px;
+  border-radius: 30px;
+  border-style: groove;
+  float: left;
+  width: 350px;
+  height: 500px;
+  text-align: center;
+}

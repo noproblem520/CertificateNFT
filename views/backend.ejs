@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <title>Backend Management</title>
+  </head>
+  <body>
+    <div id="app" class="container-fluid">
+      <table style="width: 100%">
+        <tr>
+          <td style="width: 33%"></td>
+          <td style="width: 33%; text-align: center">
+            <span
+              style="
+                font-family: Microsoft JhengHei;
+                font-size: 40px;
+                font-weight: bold;
+              "
+              >Backend Management</span
+            >
+          </td>
+          <td>
+            <button @click="getAccount()">Enable Ethereum</button>
+            <div style="font-size: 24px">Account:{{ accounts }}</div>
+          </td>
+        </tr>
+      </table>
+
+      <br /><br />
+
+      <!-- tab標籤 -->
+      <ul id="myTab" class="nav nav-tabs">
+        <li class="active dropdown">
+          <!-- <a href="#first" data-toggle="tab">
+                    頒發學習時數
+                </a> -->
+          <a
+            href="#"
+            id="myTabDrop0"
+            class="dropdown-toggle"
+            data-toggle="dropdown"
+          >
+            頒發及新增學習時數種類
+            <b class="caret"> </b>
+          </a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+            <li>
+              <a href="#first-1" tabindex="-1" data-toggle="tab">
+                頒發學習時數
+              </a>
+            </li>
+            <li>
+              <a href="#first-2" tabindex="-1" data-toggle="tab">
+                新增學習時數種類
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="dropdown">
+          <a
+            href="#"
+            id="myTabDrop1"
+            class="dropdown-toggle"
+            data-toggle="dropdown"
+          >
+            部屬合約
+            <b class="caret"> </b>
+          </a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+            <li>
+              <a href="#second-1" tabindex="-1" data-toggle="tab">
+                javaNFT(ERC721)
+              </a>
+            </li>
+            <li>
+              <a href="#second-2" tabindex="-1" data-toggle="tab">
+                credit_hours(ERC1155)
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <!-- 每個tab頁對應的內容 -->
+      <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade in active" id="first-1">
+          <br />
+          <p style="font-size: 24px">Transfer Credit hours</p>
+
+          <!-- <button
+            @click="setNFTAddr('0','0xD28bE9D08A0566e014E9a59E12060869fe46363f')"
+          >
+            setNFTAddr
+          </button>
+          <button @click="getNFTAddr()">getNFTAddr</button> -->
+          <table>
+            <tr>
+              <td>
+                <label for="toAddr">Transfer credit hours to：</label>
+              </td>
+              <td>
+                <input
+                  v-model="toAddr"
+                  type="text"
+                  placeholder="Receiver's address."
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label for="tokenID">Transfer which token：</label>
+              </td>
+              <td>
+                <input v-model="tokenID" type="text" placeholder="tokenID" />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label for="tokenAmount">Amount：</label>
+              </td>
+              <td>
+                <input v-model="amount" type="text" placeholder="Amount" />
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td style="float: right">
+                <button @click="safeTransfer(toAddr, tokenID, amount)">
+                  Transfer
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="tab-pane fade" id="first-2">
+          <br />
+          <p style="font-size: 24px">Create new Token</p>
+
+          <table>
+            <tr>
+              <td>
+                <label>mint new token：</label>
+              </td>
+              <td>
+                <input
+                  v-model="newTokenID"
+                  type="text"
+                  placeholder="tokenID"
+                  disabled
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>newTokenTitle：</label>
+              </td>
+              <td>
+                <input
+                  v-model="newTokenTitle"
+                  type="text"
+                  placeholder="Title"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td style="float: right">
+                <button
+                  @click="mintNew1155Token(newTokenID,newTokenTitle)"
+                  class=""
+                >
+                  mint
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="tab-pane fade" id="second-1">
+          <p style="font-size: 24px">NFT(ERC721)</p>
+          <table>
+            <tr>
+              <td>
+                <label>initBaseURI : </label>
+              </td>
+
+              <td>
+                <input type="text" v-model="initBaseURI" />
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <label>initGoal : </label>
+              </td>
+
+              <td>
+                <input type="text" v-model="initGoal" />
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <label>erc1155Addr : </label>
+              </td>
+              <td>
+                <input type="text" v-model="erc1155Addr" />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>erc1155Token : </label>
+              </td>
+              <td>
+                <input type="text" v-model="erc1155Token" />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Certificate Title : </label>
+              </td>
+
+              <td>
+                <input type="text" v-model="Ctitle" />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Certificate level : </label>
+              </td>
+
+              <td>
+                <input type="text" v-model="Clevel" />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Certificate image file name : </label>
+              </td>
+
+              <td>
+                <input type="text" v-model="fileName" />
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td style="float: right">
+                <button
+                  @click="deployERC721(initBaseURI,initGoal,erc1155Addr,erc1155Token,Ctitle,Clevel,fileName)"
+                >
+                  Deploy!
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="tab-pane fade" id="second-2">
+          <p style="font-size: 24px">學習時數(ERC721)</p>
+          <label
+            >預設建立之學習時數種類名稱，請以逗號隔開(e.g.
+            java_credit,kotlin_credit) :
+          </label>
+          <input type="text" v-model="erc1155TokenString" />
+          <button @click="deployERC1155(erc1155TokenString)">Deploy!</button>
+        </div>
+      </div>
+    </div>
+
+    <script
+      type="text/javascript"
+      src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"
+    ></script>
+    <script src="/javascripts/blockchain_backend.js"></script>
+  </body>
+</html>

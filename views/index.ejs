@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>
+    <%= title %>
+  </title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    function deleteRow(PK) {
+      // window.location.replace('/users/userDelete?' + "id=" + id);
+      // alert(name);
+      $.ajax({
+        method: "DELETE",
+        url: "/users/user",
+        data: { PK }
+      })
+        .done(function (msg) {
+          window.location.reload();
+        });
+    }
+    function AddRow() {
+      var v1 = $("#v1").val();
+      var v2 = $("#v2").val();
+      var obj = { 'v1': v1, 'v2': v2 };
+      // window.location.replace('/users/userAdd?' + "v1=" + v1 + "&v2=" + v2);
+      // alert(name);
+      $.post('/users/user', obj, () => {
+        window.location.reload();
+      });
+    }
+
+    function UpdateRow() {
+
+      var v1 = $("#v1").val();
+      var v2 = $("#v2").val();
+      var PK = $("#PK").val();
+      $.ajax({
+        method: "PUT",
+        url: "/users/user",
+        data: { v1, v2, PK }
+      })
+        .done(function (msg) {
+          window.location.reload();
+        });
+    }
+  </script>
+</head>
+
+
+
+<body>
+  <h1>Welcome to <%= title %>
+  </h1>
+
+  <br></br>
+
+
+
+
+
+
+  <label for="PK">id：</label>
+  <input type="text" name="PK" id="PK">
+  <label for="v1">CName：</label>
+  <input type="text" name="v1" id="v1">
+  <label for="v2">EName：</label>
+  <input type="text" name="v2" id="v2">
+  <!-- <input type="submit" name="update" id="update" value="update"> -->
+  <button onclick="UpdateRow()" name="update" id="update">Update</button>
+
+
+  <button onclick="AddRow()" name="add" id="add">Add</button>
+
+  <table class="table" style="width:100%;">
+    <th>id</th>
+    <th>CName</th>
+    <th>EName</th>
+
+    <% for(var i=0; i < result.length; i++) { %>
+      <tr>
+        <td>
+          <%= result[i].id %>
+        </td>
+        <td>
+          <%= result[i].CName %>
+        </td>
+        <td>
+          <%= result[i].EName %>
+        </td>
+        <td>
+          <button type="submit" onclick="deleteRow(<%=result[i].id %>)" id=<%=result[i].id %> name=button<%=result[i].id
+              %>>delete</button>
+        </td>
+      </tr>
+      <% } %>
+  </table>
+
+</body>
+
+</html>

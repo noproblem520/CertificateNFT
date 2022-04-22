@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <title>Frontend Management</title>
+  </head>
+  <body>
+    <div id="app" class="container-fluid">
+      <table style="width: 100%">
+        <tr>
+          <td style="width: 33%"></td>
+          <td style="width: 33%; text-align: center">
+            <span
+              style="
+                font-family: Microsoft JhengHei;
+                font-size: 40px;
+                font-weight: bold;
+              "
+              >frontend</span
+            >
+          </td>
+          <td>
+            <button @click="getAccount()">Enable Ethereum</button>
+            <div style="font-size: 24px">Account:{{ accounts }}</div>
+          </td>
+        </tr>
+      </table>
+
+      <br /><br />
+
+      <!-- tab標籤 -->
+      <ul id="myTab" class="nav nav-tabs">
+        <li class="active" @click="emptySearch()">
+          <a href="#first" data-toggle="tab"> 查詢學習時數及擁有之證書 </a>
+        </li>
+
+        <li class="">
+          <a href="#second" data-toggle="tab"> 課程種類 </a>
+        </li>
+        <li class="" @click="getAddrInfo(this.accounts)">
+          <a href="#third" data-toggle="tab"> 個人檔案 </a>
+        </li>
+      </ul>
+      <!-- 每個tab頁對應的內容 -->
+      <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade in active" id="first">
+          <br />
+          <p style="font-size: 24px">Search</p>
+
+          <br />
+
+          <div>
+            <label for="search_Addr">Addr</label>
+            <input
+              id="search_Addr"
+              v-model="search_Addr"
+              type="text"
+              placeholder="Address"
+            />
+            <button
+              @click="getAddrInfo(this.search_Addr,erc1155Ary.length,erc721Ary.length)"
+            >
+              search
+            </button>
+          </div>
+          <br />
+          <p style="font-size: 24px">學習時數</p>
+          <table class="table" style="width: 100%">
+            <th>address</th>
+            <th>tokenID</th>
+            <th>title</th>
+            <th>hours</th>
+            <tr v-for="erc1155 in erc1155Ary">
+              <td style="width: 20%">{{ erc1155.address }}</td>
+              <td style="width: 20%">{{ erc1155.tokenID }}</td>
+              <td style="width: 20%">{{ erc1155.title }}</td>
+              <td style="width: 20%">
+                <p>{{ erc1155.learning_hour }}</p>
+              </td>
+            </tr>
+          </table>
+          <br />
+
+          <p style="font-size: 24px">已取得之證書</p>
+          <div class="nftdiv" v-for="token in tokenJsonAry">
+            <div class="img-block" style="height: 55%">
+              <img
+                style="
+                  padding: 15px;
+                  width: 100%;
+                  height: 100%;
+                  object-fit: contain;
+                "
+                class="fit-picture"
+                :src="token.properties.image.URL"
+              />
+            </div>
+            <div style="margin-top: 20px">
+              <div>title : {{ token.title }}</div>
+              <div>owner : {{ token.owner }}</div>
+              <a :href="token.link" target="_blank">{{ token.link }}</a>
+              <div>validity : {{ token.validity }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="second">
+          <br />
+          <p style="font-size: 24px">資料庫erc721</p>
+          <table class="table" style="width: 100%">
+            <th>address</th>
+            <th>certificate name</th>
+            <th>level</th>
+            <th>fileName</th>
+            <th>ERC11155 Address</th>
+            <th>ERC1155 TokenID</th>
+            <tr v-for="erc721 in erc721Ary">
+              <td style="width: 20%">
+                <p>{{ erc721.address }}</p>
+              </td>
+              <td>{{ erc721.title }}</td>
+              <td>{{ erc721.level }}</td>
+              <td>
+                <p>{{ erc721.fileName }}</p>
+              </td>
+              <td>{{ erc721.ERC1155Addr }}</td>
+              <td>{{ erc721.ERC1155TokenID }}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div id="third" class="tab-pane fade">
+          <br />
+          <p style="font-size: 24px">{{ accounts }} 個人檔案</p>
+
+          <br />
+
+          <br />
+          <p style="font-size: 24px">學習時數</p>
+          <table class="table" style="width: 100%">
+            <th>address</th>
+            <th>tokenID</th>
+            <th>title</th>
+            <th>hours</th>
+            <th>award certificate</th>
+            <tr v-for="erc1155 in erc1155Ary">
+              <td style="width: 20%">{{ erc1155.address }}</td>
+              <td style="width: 20%">{{ erc1155.tokenID }}</td>
+              <td style="width: 20%">{{ erc1155.title }}</td>
+              <td style="width: 20%">
+                <p>{{ erc1155.learning_hour }}</p>
+              </td>
+              <td style="width: 20%">
+                <button @click="mintNFT(erc1155.tokenID)">
+                  award certificate
+                </button>
+              </td>
+            </tr>
+          </table>
+          <br />
+
+          <p style="font-size: 24px">已取得之證書</p>
+
+          <div class="nftdiv" v-for="token in tokenJsonAry">
+            <div class="img-block" style="height: 55%">
+              <img
+                style="
+                  padding: 15px;
+                  width: 100%;
+                  height: 100%;
+                  object-fit: contain;
+                "
+                class="fit-picture"
+                :src="token.properties.image.URL"
+              />
+            </div>
+            <div style="margin-top: 20px">
+              <div>title : {{ token.title }}</div>
+              <div>owner : {{ token.owner }}</div>
+              <a :href="token.link" target="_blank">{{ token.link }}</a>
+              <div>validity : {{ token.validity }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      type="text/javascript"
+      src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"
+    ></script>
+    <script src="/javascripts/blockchain.js"></script>
+  </body>
+</html>
